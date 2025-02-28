@@ -1,0 +1,37 @@
+name: TypeScript's Nightly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * *"
+
+permissions: {}
+
+jobs:
+  test-types:
+    name: Test Types
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
+        with:
+          check-latest: true
+          node-version: lts/*
+      - run: npm install
+      - run: npm run test:types -- --target next
+
+      - name: Notify on failed run
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        if: failure()
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "Failed TypeScript's nightly type test run",
+              body: `The following type test run against TypeScript's nightly build failed: [#${context.runNumber}](${runUrl}).`,
+            });
