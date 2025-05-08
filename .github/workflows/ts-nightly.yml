@@ -1,11 +1,12 @@
 name: TypeScript's Nightly
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
   schedule:
     - cron: "0 12 * * *"
-
-permissions: {}
 
 jobs:
   test-types:
