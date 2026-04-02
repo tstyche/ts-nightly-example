@@ -9,6 +9,6 @@
     "test:types": "tstyche"
   },
   "devDependencies": {
-    "tstyche": "5.0.0"
+    "tstyche": "7.0.0"
   }
 }
